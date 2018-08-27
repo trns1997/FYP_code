@@ -40,11 +40,11 @@ void loop() {
     } else {
       movement = 2;
     }
-    if ((input > 412) and (input < 612)) {
+    if ((input > 412) and (input < 620)) {
       movement = 0;
     }
     timer = map(abs(input_filt - 512), 0, 512, 20, 2);
-    //Serial.println(timer);
+//    Serial.println(timer);
     //Serial.print(",");
     //    Serial.println(input_filt);
   }
@@ -65,12 +65,12 @@ void loop() {
         i--;
       }
     }
-    analogWrite(9, 255);
-    analogWrite(10, 0);
-    analogWrite(11, 0);
-    //analogWrite(9, outputA);
-    //      analogWrite(10, outputB);
-    //      analogWrite(11, outputC);
+//    analogWrite(9, 255);
+//    analogWrite(10, 0);
+//    analogWrite(11, 0);
+      analogWrite(9, outputA);
+      analogWrite(10, outputB);
+      analogWrite(11, outputC);
     //    i++;
     if (i >= 360) {
       i = 0;
