@@ -14,21 +14,26 @@ ser.baudrate = 115200
 
 ser.flushInput()
 
-plot_window = 512
+plot_window = 128
 
 y_var_bi = np.array(np.zeros([plot_window]))
 y_fft_bi = np.array(np.zeros([(plot_window/2)-1]))
+power_bi = np.array(np.zeros([plot_window]));
 
 y_var_tri = np.array(np.zeros([plot_window]))
 y_fft_tri = np.array(np.zeros([(plot_window/2)-1]))
+power_tri = np.array(np.zeros([plot_window]));
 
 plt.ion()
-fig, (ax, ax1) = plt.subplots(2)
+fig, (ax, ax1, ax2) = plt.subplots(3)
 line_bi, = ax.plot(y_var_bi)
 line_tri, = ax.plot(y_var_tri)
 line_fft_bi, = ax1.plot(y_fft_bi)
 line_fft_tri, = ax1.plot(y_fft_tri)
+line_power_bi, = ax2.plot(power_bi)
+line_power_tri, = ax2.plot(power_tri)
 ax1.set_ylim(0,5000)
+ax2.set_ylim(0,500000)
 
 while True:
 	ser_bytes = ser.readline()
@@ -44,11 +49,18 @@ while True:
 	if (cnt == plot_window):
 		y_fft_bi = fft(y_var_bi)
 		y_fft_tri = fft(y_var_tri)
-		#print(y_fft_bi)
+
+		power_bi = (sum((np.abs(y_fft_bi[1:plot_window/2]))**2)/((plot_window/2)-1))*np.array(np.ones([plot_window]))
+		power_tri = (sum((np.abs(y_fft_tri[1:plot_window/2]))**2)/((plot_window/2)-1))*np.array(np.ones([plot_window]))
+
 		line_fft_bi.set_ydata(np.abs(y_fft_bi[1:plot_window/2]))
 		line_bi.set_ydata(y_var_bi)
+		line_power_bi.set_ydata(power_bi)
+
 		line_fft_tri.set_ydata(np.abs(y_fft_tri[1:plot_window/2]))
 		line_tri.set_ydata(y_var_tri)
+		line_power_tri.set_ydata(power_tri)
+
 		ax.relim()
         	ax.autoscale_view()
 		fig.canvas.draw()
