@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# license removed for brevity
+import rospy
 import serial
 import time
 import csv
@@ -6,6 +9,7 @@ matplotlib.use("tkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft
+from std_msgs.msg import Float64
 
 cnt = 0
 
@@ -39,7 +43,10 @@ ax1.set_ylim(0,5000)
 ax2.set_ylim(0,500000)
 ax3.set_ylim(-500000,500000)
 
-while True:
+pub = rospy.Publisher('/rrbot/joint2_position_controller/command', Float64, queue_size=10)
+rospy.init_node('vel_controller', anonymous=True)
+
+while not rospy.is_shutdown():
 	ser_bytes = ser.readline()
 	ser_list = ser_bytes.splitlines()[0].split(",")
 #	print(ser_list)
@@ -72,5 +79,6 @@ while True:
 		ax.relim()
         	ax.autoscale_view()
 		fig.canvas.draw()
+		pub.publish(Float64(diff[0]/100000))
 		fig.canvas.flush_events()
 		cnt = 0
