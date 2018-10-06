@@ -8,8 +8,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  adc1 = analogRead(A1) - 305;
-  adc2 = analogRead(A2);
+  adc1 = analogRead(A0) - 305;
+  adc2 = analogRead(A1);
   Serial.print(adc1);
   Serial.print(",");
   Serial.println(adc2);
