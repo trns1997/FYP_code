@@ -6,10 +6,13 @@ int inputs2[bufSize]= {0};
 int pointer, i = 0;
 unsigned long sum,sum2 = 0;
 
+#include <Wire.h>
+#define SLAVE_ADDRESS 0x0A
+
 union cvd{
   float val;
   byte b[4];
-}out,out2;
+}out,out2,out3,out4;
 
 union cvl{
   unsigned long val;
@@ -26,6 +29,33 @@ void setup() {
   Serial.begin(115200);
   pinMode(11, OUTPUT);
   timer = millis();
+  out3.val = 0;
+  out4.val = 0;
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(sendData);
+}
+
+void receiveEvent(int bytes){
+  while (Wire.available()){
+    int data = Wire.read();
+    Serial.print("data received: ");
+    Serial.println(data);
+  }
+}
+
+void sendData(){
+  byte idata[16];
+  Serial.print("sendData: ");
+  out3.val = 0;
+  out4.val = 0;
+  memcpy(idata,out.b,4);
+  memcpy(idata+4,out2.b,4);
+  memcpy(idata+8,out3.b,4);
+  memcpy(idata+12,out4.b,4);
+  //memcpy(idata+16,dcShift2.b,4);
+  //memcpy(idata+20,out2.b,4);
+  Serial.println(Wire.write(idata,16));
 }
 
 void loop() {
@@ -37,23 +67,23 @@ void loop() {
     raw.val = inputs[pointer];
     raw2.val = inputs2[pointer];
     
-    Serial.write(raw.b,4);
-    Serial.write(dcShift.b,4);
-    Serial.write(out.b,4);
-    Serial.write(raw2.b,4);
-    Serial.write(dcShift2.b,4);
-    Serial.write(out2.b,4);
+    //Serial.write(raw.b,4);
+    //Serial.write(dcShift.b,4);
+    //Serial.write(out.b,4);
+    //Serial.write(raw2.b,4);
+    //Serial.write(dcShift2.b,4);
+    //Serial.write(out2.b,4);
     //Serial.println(inputs[pointer]);
     
     if (pointer == bufSize - 1) {
-      dcShift.val = 0;
-      dcShift2.val = 0;
+      long temp = 0;
+      long temp2 = 0;
       for (i = 0; i < bufSize; i++) {
-        dcShift.val += inputs[i];
-        dcShift2.val += inputs2[i];;
+        temp += inputs[i];
+        temp2 += inputs2[i];;
       }
-      dcShift.val /= bufSize;
-      dcShift2.val /= bufSize;
+      dcShift.val = temp/bufSize;
+      dcShift2.val = temp2/bufSize;
       //Serial.println(dcShift.val);
       sum = 0;
       sum2= 0;

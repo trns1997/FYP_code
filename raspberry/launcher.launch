@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="fyp_dev" type="i2c_node.py" name="i2c" output="screen">
+    </node>
+    <node pkg="fyp_dev" type="motor_node.py" name="motor" output="screen">
+    </node>
+</launch>
