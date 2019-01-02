@@ -27,26 +27,27 @@ union cvi{
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  pinMode(11, OUTPUT);
+//  pinMode(11, OUTPUT);
   timer = millis();
   out3.val = 0;
   out4.val = 0;
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(sendData);
+  delay(10000);
 }
 
 void receiveEvent(int bytes){
   while (Wire.available()){
     int data = Wire.read();
-    Serial.print("data received: ");
-    Serial.println(data);
+//    Serial.print("data received: ");
+//    Serial.printl/n(data);
   }
 }
 
 void sendData(){
   byte idata[16];
-  Serial.print("sendData: ");
+//  Serial.print("sendData: ");
   out3.val = 0;
   out4.val = 0;
   memcpy(idata,out.b,4);
@@ -55,25 +56,25 @@ void sendData(){
   memcpy(idata+12,out4.b,4);
   //memcpy(idata+16,dcShift2.b,4);
   //memcpy(idata+20,out2.b,4);
-  Serial.println(Wire.write(idata,16));
+//  Serial.println(Wire.write/(idata,16));
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if ( (micros() - timer) > 30) {
+  if ( (micros() - timer) > 5) {
     //Serial.println(micros()-timer);
     inputs[pointer] = analogRead(pin[0]);
     inputs2[pointer]= analogRead(pin[1]);
     raw.val = inputs[pointer];
     raw2.val = inputs2[pointer];
     
-    //Serial.write(raw.b,4);
-    //Serial.write(dcShift.b,4);
-    //Serial.write(out.b,4);
-    //Serial.write(raw2.b,4);
-    //Serial.write(dcShift2.b,4);
-    //Serial.write(out2.b,4);
-    //Serial.println(inputs[pointer]);
+    Serial.write(raw.b,4);
+    Serial.write(dcShift.b,4);
+    Serial.write(out.b,4);
+    Serial.write(raw2.b,4);
+    Serial.write(dcShift2.b,4);
+    Serial.write(out2.b,4);
+//    Serial.println(inputs[pointe/r]);
     
     if (pointer == bufSize - 1) {
       long temp = 0;
