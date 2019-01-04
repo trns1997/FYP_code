@@ -5,18 +5,14 @@ Matplotlib in background process
         
 """
 import multiprocessing as mp
+import struct
 from threading import Thread
-import time
 
-import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import serial
 from matplotlib.lines import Line2D
 import numpy as np
-import random
-import datetime
-
-import serial
-import struct
 
 ###############################################################################
 #
@@ -27,10 +23,12 @@ import struct
 #
 exit_flag = False
 
+
 def listnr():
     global exit_flag
     if raw_input() == "":
         exit_flag = True
+
 
 def terminate():
     plt.close('all')
@@ -95,7 +93,7 @@ class ProcessPlotter(object):
 
         self.graphs[2].add_line(self.lines[2])
         self.graphs[2].add_line(self.lines[5])
-        self.graphs[2].set_ylim(0, 100)
+        self.graphs[2].set_ylim(0, 255)
         self.graphs[2].legend()
         self.graphs[2].set_title("Filtered Output")
         self.graphs[2].set_ylabel("Amplitude")
@@ -148,6 +146,9 @@ class NBPlot(object):
 
 def main():
     global pl
+    arr_1 = np.zeros(20)
+    arr_2 = np.zeros(20)
+    cnt = 0
     calib = False
     senMax_1 = 0
     senMax_2 = 0
@@ -183,9 +184,12 @@ def main():
         else:
             new_val_1 = (((data[2]) * calibMax) / senMax_1)
             new_val_2 = (((data[5]) * calibMax) / senMax_2)
-            data_x = [data[0], data[1], new_val_1, data[3], data[4], new_val_2]
-            # print(str(data[2]) + "," + str(data[5]))
+            arr_1[cnt % 20] = new_val_1
+            arr_2[cnt % 20] = new_val_2
+            data_x = [data[0], data[1], arr_1.mean(), data[3], data[4], arr_2.mean()]
+            print(data_x)
             pl.plot(data_x)
+            cnt += 1
 
 
 if __name__ == '__main__':
