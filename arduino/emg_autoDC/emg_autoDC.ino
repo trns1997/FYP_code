@@ -1,9 +1,9 @@
 unsigned long timer = 0;
-int pin[2] = {A1, A2};
+const int pinNum = 4;
+int pin[pinNum] = {A0, A1, A2, A3};
 const int bufSize = 60;
-int inputs[bufSize] = {0};
-int inputs2[bufSize]= {0};
-int pointer, i = 0;
+int inputs[pinNum][bufSize] = {0};
+int pointer, i, j = 0;
 unsigned long sum,sum2 = 0;
 
 #include <Wire.h>
@@ -12,25 +12,26 @@ unsigned long sum,sum2 = 0;
 union cvd{
   float val;
   byte b[4];
-}out,out2,out3,out4;
+};
+union cvd out[4] = {0};
 
 union cvl{
   unsigned long val;
   byte b[4];
-}dcShift,dcShift2;
+};
+union cvl dcShift[4] = {0};
 
 union cvi{
   int val;
   byte b[4];
-}raw,raw2;
+};
+union cvi raw[4] = {0};
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   pinMode(11, OUTPUT);
   timer = millis();
-  out3.val = 0;
-  out4.val = 0;
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(sendData);
@@ -39,63 +40,67 @@ void setup() {
 void receiveEvent(int bytes){
   while (Wire.available()){
     int data = Wire.read();
-    Serial.print("data received: ");
-    Serial.println(data);
+    //Serial.print("data received: ");
+    //Serial.println(data);
   }
 }
 
 void sendData(){
   byte idata[16];
-  Serial.print("sendData: ");
-  out3.val = 0;
-  out4.val = 0;
-  memcpy(idata,out.b,4);
-  memcpy(idata+4,out2.b,4);
-  memcpy(idata+8,out3.b,4);
-  memcpy(idata+12,out4.b,4);
-  //memcpy(idata+16,dcShift2.b,4);
-  //memcpy(idata+20,out2.b,4);
-  Serial.println(Wire.write(idata,16));
+  //Serial.print("sendData: ");
+  //for (i=0;i<pinNum;i++){
+  //uint64_t idata = 0;
+  for (i=0;i<4;i++){
+    Wire.write(out[i].b,4);
+  }
+  //Wire.write(out[0].b);
+  //Wire.write(out[1].b);
+  //Wire.write(out[2].b);
+  //Wire.write(out[3].b);
+  //memcpy(idata,out[0].b,sizeof(idata)/4);
+  //memcpy(idata+4,out[1].b,sizeof(idata)/4);
+  //memcpy(idata+8,out[2].b,sizeof(idata)/4);
+  //memcpy(idata+12,out[3].b,sizeof(idata)/4);
+  //Wire.write((out[0].b[0]<<120)|(out[0].b[1]<<112)|(out[0].b[2]<<104)|(out[0].b[3]<<96));
+  //}
+  //Wire.write((out[0][0].b<<24)
+  //Wire.write((out[0].b<<24) + (out[1].b<<16) + (out[2].b<<8) + out[3].b);
+  //Serial.print(out[2].b[0]);
+  //Serial.print(",");
+  //Serial.println(out[3].b[0]);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if ( (micros() - timer) > 30) {
+  if ( (micros() - timer) > 20) {
     //Serial.println(micros()-timer);
-    inputs[pointer] = analogRead(pin[0]);
-    inputs2[pointer]= analogRead(pin[1]);
-    raw.val = inputs[pointer];
-    raw2.val = inputs2[pointer];
-    
-    //Serial.write(raw.b,4);
-    //Serial.write(dcShift.b,4);
-    //Serial.write(out.b,4);
-    //Serial.write(raw2.b,4);
-    //Serial.write(dcShift2.b,4);
-    //Serial.write(out2.b,4);
+    for (i=0;i<pinNum;i++){
+    inputs[i][pointer] = analogRead(pin[i]);
+    //raw[i].val = inputs[i][pointer];
+    }
+
+    //Serial.write(raw[0].b,4);
+    //Serial.write(dcShift[0].b,4);
+    //Serial.write(out[0].b,4);
+    //Serial.write(raw[1].b,4);
+    //Serial.write(dcShift[1].b,4);
+    //Serial.write(out[1].b,4);
     //Serial.println(inputs[pointer]);
-    
     if (pointer == bufSize - 1) {
-      long temp = 0;
-      long temp2 = 0;
-      for (i = 0; i < bufSize; i++) {
-        temp += inputs[i];
-        temp2 += inputs2[i];;
+
+      for (i=0;i<pinNum;i++){
+        long temp = 0;
+        for (j=0;j<bufSize; j++){
+          temp += inputs[i][j];
+        }
+        dcShift[i].val = temp/bufSize;
+        sum = 0;
+        for (j=0;j<bufSize; j++){
+          inputs[i][j] = inputs[i][j] - dcShift[i].val;
+          sum += pow(inputs[i][j],2);
+        }
+        out[i].val = sqrt(sum/bufSize);
       }
-      dcShift.val = temp/bufSize;
-      dcShift2.val = temp2/bufSize;
-      //Serial.println(dcShift.val);
-      sum = 0;
-      sum2= 0;
-      for (i = 0; i < bufSize; i++) {
-        inputs[i] = inputs[i] - dcShift.val;
-        sum += pow(inputs[i], 2);
-        inputs2[i] = inputs2[i] - dcShift2.val;
-        sum2 += pow(inputs2[i], 2);
-      }
-      out.val = sqrt(sum / bufSize);
-      out2.val = sqrt(sum2 / bufSize);
-      //Serial.println(out.val);
       pointer = -1;
     }
     pointer++;

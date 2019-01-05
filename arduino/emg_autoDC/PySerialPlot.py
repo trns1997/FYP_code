@@ -136,8 +136,9 @@ class NBPlot(object):
 
 
 def main():
-    s = serial.Serial(port='/dev/cu.wchusbserial1410',baudrate=115200)
-    #pl = NBPlot()
+    #s = serial.Serial(port='/dev/cu.wchusbserial1410',baudrate=115200)
+    s = serial.Serial(port='/dev/cu.usbmodem14101',baudrate=115200)
+    pl = NBPlot()
     #for ii in range(10):
     #    data = [ii,random.randint(0,10)]
     #    pl.plot(data)
@@ -147,7 +148,7 @@ def main():
         print(type(datum))
         print(datum)
         data = struct.unpack("iIfiIf",datum)
-        #pl.plot(data)
+        pl.plot(data)
         
 
 
