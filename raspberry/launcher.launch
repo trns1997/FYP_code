@@ -3,4 +3,6 @@
     </node>
     <node pkg="fyp_dev" type="motor_node.py" name="motor" output="screen">
     </node>
+    <node pkg="fyp_dev" type="dsp_node.py" name="dsp" output="screen">
+    </node>
 </launch>

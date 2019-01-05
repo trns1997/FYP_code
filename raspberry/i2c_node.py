@@ -12,7 +12,7 @@ bus = smbus.SMBus(1)
 
 def main():
     rospy.init_node('i2c_node')
-    pub = rospy.Publisher('emg',Float32MultiArray, queue_size=1)
+    pub = rospy.Publisher('emg_ard',Float32MultiArray, queue_size=1)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         try:
@@ -21,10 +21,7 @@ def main():
             print('i2c Missing')
             continue
             #update parameter list
-        print(len(pack))
         data = bytes(pack)
-        print (data)
-        print (struct.unpack('4f16x',data))
         msg = Float32MultiArray(data=list(struct.unpack('4f16x',data)))
         pub.publish(msg)
         rate.sleep()
