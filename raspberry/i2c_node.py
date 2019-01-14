@@ -13,7 +13,7 @@ bus = smbus.SMBus(1)
 def main():
     rospy.init_node('i2c_node')
     pub = rospy.Publisher('emg_ard',Float32MultiArray, queue_size=1)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(50)
     while not rospy.is_shutdown():
         try:
             pack = bus.read_i2c_block_data(address,0)

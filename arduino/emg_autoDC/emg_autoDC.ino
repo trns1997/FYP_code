@@ -1,4 +1,5 @@
 unsigned long timer = 0;
+unsigned long temp_timer = 0;
 const int pinNum = 4;
 int pin[pinNum] = {A0, A1, A2, A3};
 const int bufSize = 20;
@@ -29,7 +30,7 @@ union cvi raw[4] = {0};
 
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(115200);
+  Serial.begin(115200);
   pinMode(11, OUTPUT);
   timer = millis();
   Wire.begin(SLAVE_ADDRESS);
@@ -50,30 +51,17 @@ void sendData(){
   for (i=0;i<4;i++){
     Wire.write(out[i].b,4);
   }
-  //memcpy(idata,out[0].b,sizeof(idata)/4);
-  //memcpy(idata+4,out[1].b,sizeof(idata)/4);
-  //memcpy(idata+8,out[2].b,sizeof(idata)/4);
-  //memcpy(idata+12,out[3].b,sizeof(idata)/4);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if ( (micros() - timer) > 5) {
-    //Serial.println(micros()-timer);
+  if ( (micros() - timer) > 460) {
+    temp_timer = micros();
     for (i=0;i<pinNum;i++){
     inputs[i][pointer] = analogRead(pin[i]);
     //raw[i].val = inputs[i][pointer];
     }
-
-    //Serial.write(raw[0].b,4);
-    //Serial.write(dcShift[0].b,4);
-    //Serial.write(out[0].b,4);
-    //Serial.write(raw[1].b,4);
-    //Serial.write(dcShift[1].b,4);
-    //Serial.write(out[1].b,4);
-    //Serial.println(inputs[pointer]);
     if (pointer == bufSize - 1) {
-
       for (i=0;i<pinNum;i++){
         long temp = 0;
         for (j=0;j<bufSize; j++){
@@ -85,11 +73,14 @@ void loop() {
           inputs[i][j] = inputs[i][j] - dcShift[i].val;
           sum += pow(inputs[i][j],2);
         }
-        out[i].val = out[i].val*0.7+sqrt(sum/bufSize)*0.3;
+        //out[i].val = out[i].val*0.7+sqrt(sum/bufSize)*0.3;
+        out[i].val = sqrt(sum/bufSize);
       }
+      Serial.println(out[0].val);
       pointer = -1;
     }
     pointer++;
     timer = micros();
+    //Serial.println(micros()-temp_timer);
   }
 }

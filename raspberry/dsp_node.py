@@ -9,12 +9,17 @@ import time
 
 pub = rospy.Publisher('emg',Float32MultiArray, queue_size=1)
 st = None
+sf = False
 max_emg = np.zeros(4)
+#min_emg = np.zeros(4)+999
 datum = np.zeros([4,20])
 pt = 0
 
 def callback(msg):
-    global max_emg, datum, pt
+    global max_emg, datum, pt, sf, st
+    if sf == False:
+        sf = True
+        st = time.time()
     if (time.time()-st)<10:
         print('Calibrating')
         # Calibrate Mode
@@ -37,7 +42,6 @@ def main():
     global st
     rospy.init_node('dsp_node')
     sub = rospy.Subscriber('emg_ard',Float32MultiArray,callback)
-    st = time.time()
     rospy.spin()
     
 
