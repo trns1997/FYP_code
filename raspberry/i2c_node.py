@@ -13,7 +13,7 @@ bus = smbus.SMBus(1)
 def main():
     rospy.init_node('i2c_node')
     pub = rospy.Publisher('emg_ard',Float32MultiArray, queue_size=1)
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(100)
     while not rospy.is_shutdown():
         try:
             pack = bus.read_i2c_block_data(address,0)
@@ -22,7 +22,7 @@ def main():
             continue
             #update parameter list
         data = bytes(pack)
-        msg = Float32MultiArray(data=list(struct.unpack('4f16x',data)))
+        msg = Float32MultiArray(data=list(struct.unpack('8f',data)))
         pub.publish(msg)
         rate.sleep()
 

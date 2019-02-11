@@ -11,10 +11,10 @@ pub = rospy.Publisher('emg',Float32MultiArray, queue_size=1)
 st = None
 sf = False
 se = False
-max_emg = np.zeros(4)
+max_emg = np.zeros(8)
 #min_emg = np.zeros(4)+999
-datum = np.zeros([4,20])
-mean_val = np.zeros(4)
+datum = np.zeros([8,20])
+mean_val = np.zeros(8)
 pt = 0
 
 def callback(msg):
@@ -30,6 +30,7 @@ def callback(msg):
         pt = 0
     else:
         pt = pt+1
+        
     if (time.time()-st)<10:
         # Calibrate Mode
         for i in range(len(max_emg)):
