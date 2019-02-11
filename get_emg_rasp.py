@@ -12,7 +12,7 @@ import serial
 from matplotlib.lines import Line2D
 import numpy as np
 
-###############################################################################
+##############################################################################
 #
 # Processing Class
 # ================
@@ -21,13 +21,6 @@ import numpy as np
 #
 exit_flag = False
 
-
-def listnr():
-    global exit_flag
-    if raw_input() == "":
-        exit_flag = True
-
-
 def terminate():
     plt.close('all')
 
@@ -35,7 +28,7 @@ def terminate():
 class ProcessPlotter(object):
     def __init__(self):
         self.x = [0]
-        self.y = [[0] for i in range(4)]
+        self.y = [[0] for i in range(8)]
         print(self.y)
 
     def call_back(self):
@@ -45,7 +38,7 @@ class ProcessPlotter(object):
                 terminate()
                 return False
             else:
-                if len(data) == 5:
+                if len(data) == 9:
                     self.x.append(data[0])
                     self.x = self.x[-1000:]
                     for i in range(len(self.y)):
@@ -75,12 +68,18 @@ class ProcessPlotter(object):
 
         self.lines = [Line2D(self.x, self.y[0], color='b', label="A1"),
                       Line2D(self.x, self.y[1], color='g', label="A2"),
-                      Line2D(self.x, self.y[2], color='c', label="A3"),
-                      Line2D(self.x, self.y[3], color='b', label="A4")]
+                      Line2D(self.x, self.y[2], color='r', label="A3"),
+                      Line2D(self.x, self.y[3], color='c', label="A4"),
+                      Line2D(self.x, self.y[4], color='m', label="F1"),
+                      Line2D(self.x, self.y[5], color='y', label="F2"),
+                      Line2D(self.x, self.y[6], color='k', label="F3"),
+                      Line2D(self.x, self.y[7], color='b', label="F4")]
 
         for i in range(2):
-            self.graphs[i].add_line(self.lines[0 + i * 2])
-            self.graphs[i].add_line(self.lines[1 + i * 2])
+            self.graphs[i].add_line(self.lines[0 + i * 4])
+            self.graphs[i].add_line(self.lines[1 + i * 4])
+            self.graphs[i].add_line(self.lines[2 + i * 4])
+            self.graphs[i].add_line(self.lines[3 + i * 4])
             self.graphs[i].set_ylim(0, 100)
             self.graphs[i].set_title("EMG Value")
             self.graphs[i].set_ylabel("Amplitude")
@@ -143,7 +142,7 @@ class NBPlot(object):
 
 
 def callback(msg):
-    data_x = [msg.data[0], msg.data[1], msg.data[2], msg.data[3]]
+    data_x = [msg.data[0], msg.data[4], msg.data[1], msg.data[5], msg.data[2], msg.data[6], msg.data[3], msg.data[7]]
     # print(data_x)
     pl.plot(data_x)
 
