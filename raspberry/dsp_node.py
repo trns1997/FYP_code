@@ -12,13 +12,14 @@ st = None
 sf = False
 se = False
 max_emg = np.zeros(8)
+min_emg = np.ones(8)*pow(2,12)-1
 #min_emg = np.zeros(4)+999
 datum = np.zeros([8,20])
 mean_val = np.zeros(8)
 pt = 0
 
 def callback(msg):
-    global max_emg, datum, pt, sf, st, se, mean_val
+    global min_emg, max_emg, datum, pt, sf, st, se, mean_val
     if sf == False:
         sf = True
         st = time.time()
@@ -36,13 +37,16 @@ def callback(msg):
         for i in range(len(max_emg)):
             if mean_val[i]>max_emg[i]:
                 max_emg[i] = mean_val[i]
+            if mean_val[i]<min_emg[i]:
+                min_emg[i] = mean_val[i]
     else:
         if se == False:
             se = True
             print('Running')
             print(max_emg)
+            print(min_emg)
         #Running Mode
-        msg = Float32MultiArray(data=mean_val*100/max_emg)
+        msg = Float32MultiArray(data=(mean_val-min_emg)*100/(max_emg-min_emg))
         pub.publish(msg)
             
 def main():

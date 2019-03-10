@@ -5,6 +5,7 @@ from std_msgs.msg import Float32MultiArray
 
 import smbus
 import struct
+import time
 
 #get respective address from parameter list 
 address = 0x0A
@@ -25,6 +26,16 @@ def main():
         msg = Float32MultiArray(data=list(struct.unpack('8f',data)))
         pub.publish(msg)
         rate.sleep()
+
+def main2():
+    while True:
+        try:
+            pack = bus.read_i2c_block_data(address,0)
+        except Exception:
+            print('i2c Missing')
+            continue
+        print(struct.unpack('8f',bytes(pack)))
+        time.sleep(1)
 
 if __name__ == '__main__':
     try:

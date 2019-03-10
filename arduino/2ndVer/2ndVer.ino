@@ -20,11 +20,13 @@
 #include <Wire_slave.h>
 #define SLAVE_ADDRESS 0x0A
 
+
 #define DEBUG 0
 
 unsigned long timer = 0;
 const int Rate = 500;
-const int pin[] = {PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7};
+const int pin[] = {PA1, PA4, PA3, PA7, PA0, PA5, PA2, PA6};
+//const int pin[] = {A0,A1,A2,A3};
 const int pinNum = sizeof(pin)/sizeof(int);
 const int bufSize = 20;
 
@@ -55,13 +57,13 @@ void setup() {
   for (i=0;i<pinNum;i++){
     pinMode(pin[i],INPUT_ANALOG);
   }
-  Wire.begin(SLAVE_ADDRESS);
-  Wire.onRequest(sendData);
+  Wire1.begin(SLAVE_ADDRESS);
+  Wire1.onRequest(sendData);
 }
 
 void sendData(){
   for (i=0;i<pinNum;i++){
-    Wire.write(out[i].b,4);
+    Wire1.write(out[i].b,4);
   }
 }
 
@@ -90,13 +92,13 @@ void loop() {
         S[i] = 0;
       }
       #if DEBUG
-      //Serial.println(String(out[4].val)+","+String(out[5].val));//+","+String(out[4].val)+","+String(out[5].val));
+        Serial.println(String(out[2].val)+","+String(out[3].val));//+","+String(out[4].val)+","+String(out[5].val));
       #endif
       pointer = -1;
     }
     pointer++;
     #if DEBUG
-      Serial.println(micros()-temp_timer);
+      //Serial.println(micros()-temp_timer);
     #endif
   }
 }
