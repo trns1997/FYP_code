@@ -67,18 +67,18 @@ class ProcessPlotter(object):
         self.pipe = pipe
         self.fig, self.graphs = plt.subplots(2, 1, sharex=True)
 
-        self.lines = [Line2D(self.x, self.y[0], color='b', label="A1"),
-                      Line2D(self.x, self.y[1], color='g', label="F1"),
-                      Line2D(self.x, self.y[2], color='r', label="FIN1"),
-                      Line2D(self.x, self.y[3], color='c', label="A2"),
-                      Line2D(self.x, self.y[4], color='m', label="F2"),
-                      Line2D(self.x, self.y[5], color='y', label="FIN2"),
-                      Line2D(self.x, self.y[6], color='b', label="A3"),
-                      Line2D(self.x, self.y[7], color='g', label="F3"),
-                      Line2D(self.x, self.y[8], color='r', label="FIN3"),
-                      Line2D(self.x, self.y[9], color='c', label="A4"),
-                      Line2D(self.x, self.y[10], color='m', label="F4"),
-                      Line2D(self.x, self.y[11], color='y', label="FIN5")]
+        self.lines = [Line2D(self.x, self.y[0], color='b', label="BICEP_EMG"),
+                      Line2D(self.x, self.y[1], color='g', label="BICEP_FSR"),
+                      Line2D(self.x, self.y[2], color='r', label="BICEP_FIN"),
+                      Line2D(self.x, self.y[3], color='c', label="TRICEP_EMG"),
+                      Line2D(self.x, self.y[4], color='m', label="TRICEP_FSR"),
+                      Line2D(self.x, self.y[5], color='y', label="TRICEP_FIN"),
+                      Line2D(self.x, self.y[6], color='b', label="ANTERIOR_EMG"),
+                      Line2D(self.x, self.y[7], color='g', label="ANTERIOR_FSR"),
+                      Line2D(self.x, self.y[8], color='r', label="ANTERIOR_FIN"),
+                      Line2D(self.x, self.y[9], color='c', label="POSTERIOR_EMG"),
+                      Line2D(self.x, self.y[10], color='m', label="POSTERIOR_FSR"),
+                      Line2D(self.x, self.y[11], color='y', label="POSTERIOR_FIN")]
 
         for i in range(2):
             self.graphs[i].add_line(self.lines[0 + i * 6])
