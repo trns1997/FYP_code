@@ -3,13 +3,13 @@
 '''
 GPIO Pin:
 -----------------------------------
-| GPIO 6  | Pin 31 | Elbow Dir    |
+| GPIO 6  | Elbow Dir    |
 -----------------------------------
-| GPIO 13 | Pin 33 | Elbow PWM    |
+| GPIO 19 | Elbow PWM    |
 -----------------------------------
-| GPIO 16 | Pin 36 | Shoulder PWM |
+| GPIO 16 | Shoulder PWM |
 -----------------------------------
-| GPIO 26 | Pin 37 | Shoulder Dir |
+| GPIO 20 | Shoulder Dir |
 -----------------------------------
 '''
 import rospy
@@ -21,11 +21,13 @@ import numpy as np
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(6,GPIO.OUT, initial=GPIO.HIGH)
-GPIO.setup(26,GPIO.OUT, initial=GPIO.HIGH)
+GPIO.setup(20,GPIO.OUT, initial=GPIO.HIGH)
 
-GPIO.setup(13,GPIO.OUT)
+GPIO.setup(22,GPIO.OUT, initial=GPIO.HIGH)
+
+GPIO.setup(19,GPIO.OUT)
 GPIO.setup(16,GPIO.OUT)
-p = GPIO.PWM(13,800)
+p = GPIO.PWM(19,800)
 p2= GPIO.PWM(16,800)
 p.start(0)
 p2.start(0)
@@ -41,20 +43,23 @@ def callback(msg):
     if (np.mean(avg_arr)>0):
         GPIO.output(6,GPIO.LOW)
     else:
-        GPIO.output(6,GPIO.HIGH)       
-    if (abs(np.mean(avg_arr)) > 20):
-        p.ChangeDutyCycle(100)
+        GPIO.output(6,GPIO.HIGH)
+        
+    if (abs(np.mean(avg_arr)) > 8):
+        p.ChangeDutyCycle(abs(np.mean(avg_arr)))
     else:
         p.ChangeDutyCycle(0)
-
+        
     if (np.mean(avg_arr2)>0):
-        GPIO.output(26,GPIO.LOW)
+        GPIO.output(20,GPIO.LOW)
     else:
-        GPIO.output(26,GPIO.HIGH)       
-    if (abs(np.mean(avg_arr2)) > 20):
+        GPIO.output(20,GPIO.HIGH)
+        
+    if (abs(np.mean(avg_arr2)) > 8):
         p2.ChangeDutyCycle(100)
     else:
         p2.ChangeDutyCycle(0)
+        
 
     i+=1
     if i>=20:

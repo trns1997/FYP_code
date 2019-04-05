@@ -25,7 +25,7 @@
 
 unsigned long timer = 0;
 const int Rate = 500;
-const int pin[] = {PA1, PA4, PA3, PA7, PA0, PA5, PA2, PA6};
+const int pin[] = {PA7, PA1, PA0, PA6, PA2, PA5, PA4, PA3};
 //const int pin[] = {A0,A1,A2,A3};
 const int pinNum = sizeof(pin)/sizeof(int);
 const int bufSize = 20;
@@ -57,22 +57,21 @@ void setup() {
   for (i=0;i<pinNum;i++){
     pinMode(pin[i],INPUT_ANALOG);
   }
-  Wire1.begin(SLAVE_ADDRESS);
-  Wire1.onRequest(sendData);
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onRequest(sendData);
+  pinMode(PB12,OUTPUT);
+  digitalWrite(PB12,LOW);
 }
 
 void sendData(){
   for (i=0;i<pinNum;i++){
-    Wire1.write(out[i].b,4);
+    Wire.write(out[i].b,4);
   }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   if ( (micros() - timer) > Rate) {
-    #if DEBUG
-      temp_timer = micros();
-    #endif
     timer = micros();
     for (i=0;i<pinNum/2;i++){
       datum = analogRead(pin[i]);
@@ -92,13 +91,10 @@ void loop() {
         S[i] = 0;
       }
       #if DEBUG
-        Serial.println(String(out[2].val)+","+String(out[3].val));//+","+String(out[4].val)+","+String(out[5].val));
+        Serial.println(String(out[4].val)+","+String(out[5].val)+","+String(out[6].val)+","+String(out[7].val));
       #endif
       pointer = -1;
     }
     pointer++;
-    #if DEBUG
-      //Serial.println(micros()-temp_timer);
-    #endif
   }
 }
