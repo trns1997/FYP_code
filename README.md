@@ -27,6 +27,8 @@ On your PC you can now subscribe to the emg node and visualize the data using th
 ```
 ./fuse_plot.py
 ```
+The output if everything is setup correctly should look like the following
+<img src="https://github.com/trns1997/FYP_code/blob/master/media/fus.gif"/>
 
 ```
 ./get_emg_rasp.py
@@ -35,6 +37,8 @@ On your PC you can now subscribe to the emg node and visualize the data using th
 ```
 ./kalman.py
 ```
+The output if everything is setup correctly should look like the following
+<img src="https://github.com/trns1997/FYP_code/blob/master/media/kal.gif"/>
 
 
 ## Authors
