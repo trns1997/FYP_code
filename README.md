@@ -12,4 +12,3 @@ INTRO
 See also the list of [contributors](https://github.com/trns1997/FYP_code/contributors) who participated in this project.
 
 ## Acknowledgments
-* Professor Jun Seo, Course Code: ELEC4010M/MECH4000J, HKUST, Hong Kong
