@@ -142,7 +142,7 @@ class NBPlot(object):
 
 
 def callback(msg):
-    data_x = [msg.data[0], msg.data[4], msg.data[1], msg.data[5], msg.data[2], msg.data[6], msg.data[3], msg.data[7]]
+    data_x = [msg.data[0], msg.data[1], msg.data[2], msg.data[3], 0,0,0,0]
     # print(data_x)
     pl.plot(data_x)
 

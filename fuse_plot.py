@@ -71,7 +71,7 @@ class ProcessPlotter(object):
 
         for i in range(2):
             self.graphs[i].add_line(self.lines[0 + i * 1])
-            self.graphs[i].set_ylim(-100, 100)
+            self.graphs[i].set_ylim(-255, 255)
             self.graphs[i].set_title("Output")
             self.graphs[i].set_ylabel("Amplitude")
             self.graphs[i].set_xlabel("Time")
