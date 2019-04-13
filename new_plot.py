@@ -4,6 +4,11 @@ import pyqtgraph as pg
 from pyqtgraph.ptime import time
 #QtGui.QApplication.setGraphicsSystem('raster')
 
+import rospy
+import struct
+from std_msgs.msg import Float32MultiArray
+
+
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title="Basic plotting examples")
 win.setWindowTitle('Example PlotWidget')
@@ -42,7 +47,7 @@ data7 = np.random.normal(size=(10,1000))
 data72= np.random.normal(size=(10,1000))
 
 ptr7 = 0
-def update7():
+def update7(msg):
     global curve7, data7, ptr7, p7, curve72, data72
     global curve, data, ptr, p6, curve2, data2
     curve7.setData(data7[ptr7%10])
@@ -57,11 +62,15 @@ def update7():
         p6.enableAutoRange('xy', False)  ## stop auto-scaling after the first data set is plotted
     ptr += 1  
 
-timer = QtCore.QTimer()
-timer.timeout.connect(update7)
-timer.start(50)  
+#timer = QtCore.QTimer()
+#timer.timeout.connect(update7)
+#timer.start(50)  
 
 if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
+        print("IN")
+        rospy.init_node('plotter_node')
+        sub = rospy.Subscriber('emg',Float32MultiArray, update7)
+        rospy.spin()
